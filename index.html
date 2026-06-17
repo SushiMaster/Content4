@@ -1,250 +1,369 @@
 <!DOCTYPE html>
-<html lang="ru" class="scroll-smooth">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Суши Мастер — лидер вовлечённости среди федеральных сетей доставки еды во ВКонтакте | Суши Мастер</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Почему ручная настройка карт в доставке — это скрытый налог на невнимательность, и как мы от него избавились в Суши Мастер</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
+        :root {
+            --primary-color: #E22119;
+            --primary-hover: #C11710;
+            --text-main: #1F2937;
+            --text-muted: #4B5563;
+            --bg-main: #FAFAFA;
+            --bg-card: #FFFFFF;
+            --border-color: #E5E7EB;
+            --accent-soft: #FEF2F2;
         }
-        /* Фирменный красный цвет Суши Мастер из логотипа */
-        .brand-red { color: #e30613; }
-        .bg-brand-red { background-color: #e30613; }
-        .border-brand-red { border-color: #e30613; }
-        .selection\:bg-brand-red::selection { background-color: #e30613; color: white; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Индикатор прогресса чтения */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            z-index: 1000;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Шапка бренда */
+        .brand-header {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 24px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand-logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+        .brand-tag {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* Контейнер статьи */
+        article {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 24px 100px;
+            background-color: var(--bg-card);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            margin-top: 20px;
+            margin-bottom: 60px;
+        }
+
+        .meta {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            font-weight: 500;
+        }
+        .meta .category {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 32px;
+            color: #111827;
+        }
+
+        .lead-paragraph {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #374151;
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+
+        p {
+            font-size: 1.125rem;
+            margin-bottom: 24px;
+            color: #374151;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-top: 48px;
+            margin-bottom: 20px;
+            color: #111827;
+            letter-spacing: -0.5px;
+            position: relative;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        /* Выделенные цитаты / инфоблоки */
+        .callout-box {
+            background-color: var(--accent-soft);
+            border-left: 4px solid var(--primary-color);
+            padding: 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 32px 0;
+        }
+        .callout-box p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: #1F2937;
+        }
+
+        /* Списки преимуществ */
+        .feature-list {
+            list-style: none;
+            margin: 32px 0;
+        }
+        .feature-item {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 24px;
+            font-size: 1.125rem;
+            color: #374151;
+        }
+        .feature-item::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-soft);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+        .feature-title {
+            font-weight: 700;
+            color: #111827;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 1.2rem;
+        }
+
+        /* Карточки проблем */
+        .problem-grid {
+            margin: 32px 0;
+        }
+        .problem-card {
+            background: #FFF;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .problem-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+        }
+        .problem-num {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #FFF;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+        .problem-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        /* Подвал */
+        footer {
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+            padding-top: 30px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .lead-paragraph { font-size: 1.15rem; }
+            body { font-size: 16px; }
+            article { padding: 16px 16px 60px; border-radius: 0; margin-top: 0; }
+        }
     </style>
 </head>
-<body class="bg-white text-zinc-900 antialiased selection:bg-brand-red selection:text-white">
+<body>
 
-    <header class="w-full border-b border-zinc-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-6 h-24 flex items-center justify-between">
-            <div class="flex items-center">
-                <img src="assets/logo.png" alt="Суши Мастер" class="h-12 w-auto object-contain">
-            </div>
-            <span class="text-xs font-mono tracking-widest text-zinc-400 uppercase">Маркетинговый кейс 2026</span>
-        </div>
+    <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+    </div>
+
+    <header class="brand-header">
+        <div class="brand-logo">Суши Мастер Inside</div>
+        <div class="brand-tag">Кейс Автоматизации</div>
     </header>
 
-    <!-- Уменьшен общий вертикальный шаг между блоками с space-y-20 до space-y-10 -->
-    <main class="max-w-4xl mx-auto px-6 py-12 md:py-16 space-y-10 md:space-y-14">
+    <article>
+        <div class="meta">
+            <span class="category">Фудтех & Логистика</span>
+            <span>•</span>
+            <span>Читать 5 мин</span>
+        </div>
+
+        <h1>Почему ручная настройка карт в доставке — это скрытый налог на невнимательность, и как мы от него избавились в Суши Мастер</h1>
+
+        <p class="lead-paragraph">
+            Эффективность современной службы доставки еды во многом зависит от точности управления радиусами и зонами доставки. В условиях, когда бренд представлен в десятках городов и на нескольких внешних платформах-агрегаторах, ручное администрирование этих данных неизбежно становится узким горлышком для бизнеса.
+        </p>
+
+        <p>
+            Любое стратегическое или плановое изменение логистических контуров — будь то расширение зоны покрытия, открытие новой точки, изменение тарифов или временное сужение радиуса из-за дефицита курьеров — требует мгновенного отражения на всех витринах. В классической модели управляющим и менеджерам приходится вручную переносить изменения в личные кабинеты каждой платформы (Яндекс Еда, Деливери Клаб, Чиббис). На стыке этого процесса возникает системный рассинхрон, который напрямую бьет по экономике ресторанов.
+        </p>
+
+        <p>
+            Команда ИТ-департамента управляющей компании Суши Мастер автоматизировала этот процесс, связав внутреннюю ERP-систему Jetti напрямую с API ключевых агрегаторов. Давайте разберем, как сквозная выгрузка геозон оптимизирует операционные процессы и защищает прибыль крупной сети ресторанов.
+        </p>
+
+        <h2>Проблема: Цена ручной настройки и скрытые операционные убытки</h2>
         
-        <header class="space-y-6">
-            <div class="inline-flex items-center gap-2 bg-zinc-50 border border-zinc-200 px-4 py-1.5 rounded-full">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-red"></span>
-                <span class="text-zinc-500 text-xs font-medium tracking-wider uppercase">SMM & CRM Аналитика</span>
-            </div>
-            
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-zinc-900 leading-none">
-                Суши Мастер — лидер вовлечённости
-            </h1>
-            <p class="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-zinc-800 leading-tight pt-2">
-                Среди федеральных сетей доставки еды во ВКонтакте
-            </p>
-            
-            <p class="text-lg md:text-xl text-zinc-900 font-normal leading-relaxed pt-4 max-w-3xl">
-                Социальные сети давно перестали быть просто витриной бизнеса. Сегодня количество подписчиков уже не является главным показателем успеха. Намного важнее другое — насколько аудитория действительно взаимодействует с контентом, реагирует на публикации, участвует в обсуждениях и остаётся вовлечённой в жизнь бренда.
-            </p>
-            <p class="text-lg md:text-xl text-zinc-900 font-normal leading-relaxed max-w-3xl">
-                Мы проанализировали показатели крупнейших игроков рынка доставки еды во ВКонтакте и получили результат, который заслуживает отдельного внимания.
-            </p>
-        </header>
+        <p>
+            Попытки управлять зонами доставки «в ручном режиме» на нескольких независимых платформах одновременно приводят к трем ключевым бизнес-рискам:
+        </p>
 
-        <!-- Раздел 01 -->
-        <!-- Уменьшен внутренний отступ pt-12 до pt-6 -->
-        <section class="space-y-4 border-t border-zinc-100 pt-6">
-            <span class="text-xs font-mono uppercase text-zinc-400 tracking-widest block">01 // Анализ рынка</span>
-            <h2 class="text-3xl md:text-5xl font-black text-zinc-900 tracking-tight">
-                Суши Мастер показывает лучший уровень вовлечённости среди конкурентов
-            </h2>
-            <p class="text-lg md:text-xl text-zinc-900 font-normal leading-relaxed pt-2">
-                В исследование вошли крупнейшие сообщества отрасли: Burger King, Суши Вок, Farfor, Суши Мастер, MYBOX, Юфиш. Несмотря на то что по количеству подписчиков Суши Мастер уступает отдельным федеральным брендам, именно наша аудитория демонстрирует самый высокий уровень активности.
-            </p>
-
-            <p class="text-xl md:text-2xl font-bold text-zinc-800 tracking-tight leading-tight pt-4 pb-2">
-                Сравнение ключевых показателей
-            </p>
-
-            <!-- Адаптивная таблица данных -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-zinc-200 text-zinc-400 text-xs font-mono uppercase tracking-wider">
-                            <th class="py-3 px-4 pl-0">Бренд</th>
-                            <th class="py-3 px-4 text-right">Подписчики</th>
-                            <th class="py-3 px-4 text-right">Постов</th>
-                            <th class="py-3 px-4 text-right pr-0">ER</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm md:text-base divide-y divide-zinc-100 font-normal">
-                        <tr>
-                            <td class="py-4 px-4 pl-0 font-medium">Burger King</td>
-                            <td class="py-4 px-4 text-right">1 576 845</td>
-                            <td class="py-4 px-4 text-right">33</td>
-                            <td class="py-4 px-4 text-right pr-0 text-zinc-500">0,06%</td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-0 font-medium">Суши Вок</td>
-                            <td class="py-4 px-4 text-right">408 157</td>
-                            <td class="py-4 px-4 text-right">15</td>
-                            <td class="py-4 px-4 text-right pr-0 text-zinc-500">0%</td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-0 font-medium">Farfor</td>
-                            <td class="py-4 px-4 text-right">311 674</td>
-                            <td class="py-4 px-4 text-right">21</td>
-                            <td class="py-4 px-4 text-right pr-0 text-zinc-500">0,22%</td>
-                        </tr>
-                        <tr class="bg-zinc-50/50">
-                            <td class="py-4 px-4 pl-0 font-black brand-red">Суши Мастер</td>
-                            <td class="py-4 px-4 text-right font-bold">253 094</td>
-                            <td class="py-4 px-4 text-right font-bold">33</td>
-                            <td class="py-4 px-4 text-right pr-0 font-black brand-red">0,51%</td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-0 font-medium">MYBOX</td>
-                            <td class="py-4 px-4 text-right">136 346</td>
-                            <td class="py-4 px-4 text-right">30</td>
-                            <td class="py-4 px-4 text-right pr-0 text-zinc-500">0,27%</td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-0 font-medium">Юфиш</td>
-                            <td class="py-4 px-4 text-right">115 628</td>
-                            <td class="py-4 px-4 text-right">214</td>
-                            <td class="py-4 px-4 text-right pr-0 text-zinc-500">0,08%</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <span class="problem-num">Риск 1</span>
+                <div class="problem-title">Технологический рассинхрон</div>
+                <p style="font-size: 1rem; margin-bottom: 0;">Если на официальном сайте бренда зона доставки уже скорректирована, а на стороне одного из агрегаторов обновить данные забыли, система пропустит заказ на недоступный или нерентабельный адрес.</p>
             </div>
 
-            <div class="text-lg md:text-xl text-zinc-900 font-normal leading-relaxed pt-4">
-                <p>
-                    Показатель вовлечённости (ER) у Суши Мастер составил 0,51%, что является лучшим результатом среди всех участников сравнения.
-                </p>
-                <div class="text-2xl md:text-4xl font-extrabold text-zinc-900 py-4 border-l-4 border-brand-red pl-6 my-4 tracking-tight leading-tight">
-                    Для понимания масштаба: при аудитории более чем <span class="brand-red">в шесть раз меньше</span>, чем у Burger King, наше сообщество показывает вовлечённость более чем <span class="brand-red">в восемь раз выше</span>.
-                </div>
+            <div class="problem-card">
+                <span class="problem-num">Риск 2</span>
+                <div class="problem-title">Штрафы и блокировки со стороны агрегаторов</div>
+                <p style="font-size: 1rem; margin-bottom: 0;">Когда ресторан вынужден отменять некорректно принятый агрегатором заказ, алгоритмы внешних платформ пессимизируют карточку заведения. Частые отмены и срывы времени доставки ведут к падению рейтинга, снижению видимости в приложении, а в худшем случае — к долгосрочной блокировке ресторана.</p>
             </div>
-        </section>
 
-        <!-- Раздел 02 -->
-        <section class="space-y-4 border-t border-zinc-100 pt-6">
-            <span class="text-xs font-mono uppercase text-zinc-400 tracking-widest block">02 // Стратегический разбор</span>
-            <h2 class="text-3xl md:text-5xl font-black text-zinc-900 tracking-tight">
-                Большая аудитория не всегда означает живое сообщество
-            </h2>
-            <p class="text-xl md:text-2xl font-bold text-zinc-500 tracking-tight leading-tight">
-                Результаты исследования ещё раз подтверждают важную тенденцию рынка: количество подписчиков и реальная активность аудитории — разные вещи.
+            <div class="problem-card">
+                <span class="problem-num">Риск 3</span>
+                <div class="problem-title">Падение маржинальности</div>
+                <p style="font-size: 1rem; margin-bottom: 0;">Доставка заказов в удаленные или перегруженные трафиком районы без учета актуальных операционных мощностей точки быстро превращает прибыльный чек в убыточный из-за переплаты за курьерский транзит.</p>
+            </div>
+        </div>
+
+        <h2>Решение: Автоматическая выгрузка геозон по принципу «Одного окна»</h2>
+
+        <p>
+            Внедренное ИТ-решение исключило необходимость ручного дублирования настроек. Логистическое ядро ERP-системы Jetti было напрямую интегрировано с сервисами Яндекс Еда, Деливери Клаб и Чиббис.
+        </p>
+
+        <div class="callout-box">
+            <p>
+                Теперь управление всеми логистическими полигонами происходит в едином интерфейсе. Как только менеджер вносит плановые изменения в Jetti, система автоматически и без участия человека обновляет геозоны на всех внешних площадках. На сегодняшний день автоматическая выгрузка успешно развернута и стабильно работает на всех розничных точках сети.
             </p>
-            
-            <div class="text-lg md:text-xl text-zinc-900 font-normal space-y-6 leading-relaxed pt-2">
-                <p>
-                    <span class="brand-red font-bold">Суши Вок: большая база без активности.</span><br>
-                    На первый взгляд сообщество выглядит внушительно — более 408 тысяч подписчиков. Однако за анализируемый период аккаунт потерял более 42 тысяч участников, а вовлечённость фактически находится на нулевом уровне. При 15 публикациях было получено всего 3 комментария. Это показатель того, что большая база подписчиков не гарантирует интерес аудитории к контенту.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Burger King: охваты есть, диалога нет.</span><br>
-                    Крупнейшее сообщество в выборке с аудиторией более 1,5 миллиона человек. Контент регулярно собирает просмотры и реакции, однако показатель вовлечённости составляет лишь 0,06%. Мемы и вирусные публикации позволяют получать охваты, но практически не формируют активное сообщество вокруг бренда.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Юфиш: когда количество не переходит в качество.</span><br>
-                    Особенно интересен пример Юфиш. За период было опубликовано 214 постов — это более чем в шесть раз больше, чем у Суши Мастер. Однако такая частота публикаций не привела к росту вовлечённости. Напротив, показатель ER составил всего 0,08%. Этот пример показывает, что увеличение количества контента не всегда приводит к улучшению результатов. Гораздо важнее качество публикаций и их соответствие интересам аудитории.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Единственный конкурент, который растёт:</span><br>
-                    Особого внимания заслуживает Farfor. Это единственный аккаунт среди участников исследования, который продемонстрировал существенный прирост аудитории — более 4 500 новых подписчиков за период. При этом уровень вовлечённости остаётся ниже показателей Суши Мастер и составляет 0,22%.
-                </p>
-                <p>
-                    Такой результат говорит о том, что компания успешно использует механики привлечения новой аудитории. Вероятнее всего, рост обеспечивается за счёт активной работы с видеоконтентом, клипами или дополнительных инструментов продвижения. Именно поэтому опыт Farfor заслуживает отдельного изучения. Среди всех конкурентов это единственный игрок, которому удалось одновременно сохранить активность сообщества и обеспечить заметный прирост подписчиков.
-                </p>
-            </div>
-        </section>
+        </div>
 
-        <!-- Раздел 03 -->
-        <section class="space-y-4 border-t border-zinc-100 pt-6">
-            <span class="text-xs font-mono uppercase text-zinc-400 tracking-widest block">03 // Внутренний аудит</span>
-            <h2 class="text-3xl md:text-5xl font-black text-zinc-900 tracking-tight">
-                Что говорят цифры о Суши Мастер
-            </h2>
-            <p class="text-xl md:text-2xl font-bold text-zinc-500 tracking-tight leading-tight">
-                Главная ценность нашего сообщества — активная и живая аудитория.
-            </p>
-            <div class="text-lg md:text-xl text-zinc-900 font-normal space-y-4 leading-relaxed pt-2">
-                <p>В среднем каждая публикация получает:</p>
-                <p>• <strong>809 лайков;</strong></p>
-                <p>• <strong>370 комментариев;</strong></p>
-                <p>• высокий уровень вовлечённости относительно размера аудитории.</p>
-                <p>
-                    <span class="brand-red font-bold">Механика:</span> Регулярный выход клипов, конкурсные механики, праздничные активности и специальные предложения помогают поддерживать интерес подписчиков и формировать устойчивое взаимодействие с брендом.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Результат:</span> Отдельно стоит отметить динамику аудитории. За анализируемый период изменение составило всего −26 подписчиков. Для сравнения: Суши Вок потерял 42 704 подписчика; Burger King потерял 6 597 подписчиков. На фоне рынка это практически нулевая коррекция аудитории.
-                </p>
-            </div>
-        </section>
+        <h2>В чем чистый профит для бизнеса и франчайзи-партнеров?</h2>
 
-        <!-- Раздел 04 (Исправлена нумерация) -->
-        <section class="space-y-4 border-t border-zinc-100 pt-6">
-            <span class="text-xs font-mono uppercase text-zinc-400 tracking-widest block">04 // Тактический план</span>
-            <h3 class="text-3xl md:text-5xl font-black text-zinc-900 tracking-tight">Как усилить текущие результаты</h3>
-            <p class="text-lg md:text-xl text-zinc-500 font-light leading-relaxed">
-                Исследование показывает, что Суши Мастер уже находится в числе лидеров отрасли по качеству взаимодействия с аудиторией. Поэтому основная задача сегодня — не исправлять слабые места, а усиливать сильные стороны.
-            </p>
+        <p>
+            Для наших партнеров этот релиз — не просто «какая-то там техническая строчка в отчете разработчиков», а вполне осязаемые деньги и безопасность бизнеса. И вот почему:
+        </p>
 
-            <div class="text-lg md:text-xl text-zinc-900 font-normal space-y-6 leading-relaxed pt-2">
-                <p>
-                    <span class="brand-red font-bold">Больше контента с людьми:</span> Алгоритмы VK всё активнее продвигают ролики с участием людей. Повара, сотрудники ресторанов, истории клиентов, процессы приготовления и закулисье бренда способны привлекать новую аудиторию эффективнее классических продуктовых съёмок.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Регулярные опросы:</span> Простые голосования помогают увеличивать охват публикаций практически без дополнительных затрат. Даже самые простые вопросы вроде «Филадельфия или Калифорния?» или «Суши в пятницу или в субботу?» способны собирать сотни взаимодействий и поддерживать постоянную активность аудитории.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Конкурсы с отметкой друзей:</span> Механика «отметь друга в комментариях» остаётся одним из самых эффективных инструментов органического роста без рекламного бюджета.
-                </p>
-                <p>
-                    <span class="brand-red font-bold">Истории клиентов:</span> Практика показывает, что реальные истории гостей вызывают высокий интерес аудитории. Публикация о клиенте, заказавшем более 200 порций Филадельфии, стала ярким примером того, как личные истории помогают укреплять связь между брендом и подписчиками.
-                </p>
-            </div>
-        </section>
+        <ul class="feature-list">
+            <li class="feature-item">
+                <span class="feature-title">Защита рейтинга и защита от блокировок</span>
+                Помните, как агрегаторы не любят отмены заказов и опоздания? Автоматизация геозон гарантирует: ресторан получает только те заказы, которые курьер железно успеет привезти вовремя. Никаких «левых» адресов, никаких обиженных гостей и никаких штрафных санкций от платформ.
+            </li>
+            <li class="feature-item">
+                <span class="feature-title">Экономия сотен часов рабочего времени</span>
+                Управляющие ресторанов освободились от рутинной технической работы. Вместо ручной перерисовки полигонов на картах в трех админках они могут заняться качеством сервиса, контролем кухни и обучением персонала.
+            </li>
+            <li class="feature-item">
+                <span class="feature-title">Максимальный охват без рисков</span>
+                Открылась новая точка в городе или расширился штат курьеров? Новая зона доставки мгновенно раскатывается на все агрегаторы одним кликом. Сеть начинает сразу собирать максимум заказов с новых улиц, не теряя ни дня на ручные согласования.
+            </li>
+            <li class="feature-item">
+                <span class="feature-title">Идеальная точность</span>
+                Никаких пересечений зон, путаницы между брендами на одном адресе и технологического хаоса. Все работает монолитно и профессионально.
+            </li>
+        </ul>
 
-        <!-- Раздел 05 -->
-        <section class="space-y-4 border-t border-zinc-100 pt-6">
-            <span class="text-xs font-mono uppercase text-zinc-400 tracking-widest block">05 // Резюме</span>
-            <h2 class="text-3xl md:text-5xl font-black text-zinc-900 tracking-tight">
-                Главный вывод
-            </h2>
-            <div class="text-lg md:text-xl text-zinc-900 font-normal space-y-6 leading-relaxed pt-2">
-                <p>
-                    Главный вывод исследования меняет подход к стратегии развития сообщества. Сегодня Суши Мастер уже не является догоняющим игроком на рынке социальных сетей. По уровню вовлечённости бренд занимает первое место среди всех конкурентов, вошедших в анализ. Это означает, что аудитория не просто подписана на сообщество, а активно взаимодействует с контентом, участвует в обсуждениях и остаётся вовлечённой в жизнь бренда.
-                </p>
-                <p>
-                    Поэтому основная задача на ближайший квартал — не пытаться догнать конкурентов по показателю вовлечённости, а сохранить своё преимущество и превратить высокую активность аудитории в рост базы подписчиков.
-                </p>
-                
-                <p class="text-xl font-bold pt-2">Ориентиры на следующий квартал:</p>
-                <p>• удерживать показатель ER выше <strong>0,45%</strong>;</p>
-                <p>• увеличить аудиторию сообщества до <strong>260–265 тысяч подписчиков</strong> преимущественно органическими инструментами;</p>
-                <p>• расширять долю VK Клипов и контента с участием людей;</p>
-                <p>• использовать механики рекомендаций и отметок друзей для привлечения новых пользователей;</p>
-                <p>• изучить опыт Farfor как единственного растущего игрока в выборке и адаптировать наиболее эффективные инструменты привлечения аудитории.</p>
-            </div>
+        <h2>Резюме</h2>
 
-            <!-- Подвал лонгрида прижат плотнее -->
-            <div class="pt-6 space-y-4 text-left border-t border-zinc-100 mt-6">
-                <p class="text-xl md:text-2xl font-bold text-zinc-900 leading-tight">
-                    Если сегодня Суши Мастер выигрывает по качеству взаимодействия с аудиторией, то следующая цель — стать лидером ещё и по темпам роста сообщества, сохранив при этом лучшую вовлечённость среди конкурентов.
-                </p>
-                <p class="text-2xl font-black brand-red pt-1">Всё получится!</p>
-            </div>
-        </section>
+        <p>
+            Пока конкуренты продолжают держать в штате сотрудников, чья единственная обязанность — следить за актуальностью адресов на разных сайтах, Суши Мастер превращает логистику в полностью автоматический процесс.
+        </p>
 
-    </main>
+        <p>
+            Интеграция геозон доказала: современный фудтех — это не только про то, как вкусно сварить рис и красиво нарезать лосось. Это про то, как с помощью технологий автоматизировать рутину, сберечь нервы команде и заработать больше денег там, где остальные их теряют. Данные должны работать на бизнес, а не наоборот!
+        </p>
 
-    <footer class="w-full border-t border-zinc-100 bg-zinc-50 py-10 text-center text-xs text-zinc-400 font-mono uppercase tracking-widest">
-        <div>&copy; 2026 Управляющая Компания Суши Мастер. Развернуто на GitHub Pages.</div>
-    </footer>
+        <footer>
+            <p>© 2026 ИТ-департамент Суши Мастер. Разработка и автоматизация процессов.</p>
+        </footer>
+    </article>
 
+    <script>
+        window.onscroll = function() {myFunction()};
+
+        function myFunction() {
+          var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+          var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          var scrolled = (winScroll / height) * 100;
+          document.getElementById("myBar").style.width = scrolled + "%";
+        }
+    </script>
 </body>
 </html>
